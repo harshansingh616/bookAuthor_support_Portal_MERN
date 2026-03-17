@@ -39,7 +39,7 @@ export default function LoginPage() {
         <button className="btn btn-primary" type="submit">Login</button>
 
         <div className="text-muted small mt-3">
-          Author password: <code>Author@12345</code> | Admin: <code>admin@bookleaf.test / Admin@12345</code>
+         
         </div>
       </form>
     </div>

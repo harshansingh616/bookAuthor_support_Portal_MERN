@@ -1,7 +1,7 @@
 
 ---
 
-## 2) `WRITEUP.md` (max ~1 page)
+## 2) `WRITEUP.md`
 
 ```md
 # BookLeaf Portal – Approach & Tradeoffs (1 Page)

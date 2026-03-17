@@ -1,51 +1,43 @@
 # BookLeaf Author Support & Communication Portal
 
-A full-stack web app (React + Express + MongoDB Atlas) to manage author support tickets with AI-assisted triage and response drafting.
+A full-stack web app that helps BookLeaf handle author support tickets at scale with:
+- Author portal (books + tickets)
+- Admin portal (ticket queue + ticket management)
+- AI-assisted triage + AI-drafted replies (Groq)
+- Near real-time updates (SSE)
+
+---
+
+## Live Demo
+- Frontend (Vercel): `book-author-support-portal-mern.vercel.app`
+- Backend (Render): `https://bookauthor-support-portal-mern.onrender.com`
+
+---
+
+## Test Login Credentials
+
+### Admin
+- Email: `admin@bookleaf.test`
+- Password: `Admin@12345`
+
+### Authors
+Use any author email from the seeded dataset (examples):
+- `priya.sharma@email.com`
+- `rohit.kapoor@email.com`
+- `ananya.reddy@email.com`
+
+Password (for all authors): `Author@12345`
+
+---
 
 ## Tech Stack
 - Frontend: React (Vite) + React Router DOM + Bootstrap
 - Backend: Node.js + Express
-- DB: MongoDB Atlas (Mongoose)
+- Database: MongoDB Atlas (Mongoose)
 - Auth: JWT
 - Validation: Zod
-- Realtime: Server-Sent Events (SSE)
-- AI: Groq (OpenAI-compatible chat completions)
-
----
-
-## Features
-
-### Author Portal
-- Login (email/password)
-- My Books (royalties, status, sales, etc.)
-- Create Support Ticket (book-specific or general)
-- My Tickets (list + detail)
-- Realtime updates (admin replies appear without refresh via SSE)
-
-### Admin Portal
-- Ticket Queue with filters (status/category/priority/date/search)
-- Urgent tickets prioritized by backend sorting (unresolved → priority → oldest)
-- Ticket detail: conversation + status/category/priority updates + internal notes + assign to self
-- AI draft reply (editable)
-- AI triage (auto category + priority on ticket creation, admin can override)
-
----
-
-## Architecture (Interview Explanation)
-This project uses a clean separation of concerns:
-
-- **Routes**: only URL mapping (no business logic)
-- **Middleware**: cross-cutting concerns (auth, role-based access, validation, error handling)
-- **Controllers**: HTTP-only (req → service → res)
-- **Services**: business logic + database access + SSE publish + AI calls
-- **Models**: Mongoose schemas
-- **AI Layer**: Groq client + prompt strategy + Zod validation of AI outputs
-- **Realtime Layer**: SSE hub (in-memory pub/sub for this assignment)
-
-Why this approach:
-- Easier to test services
-- Easier to reason about during interview
-- Scales better than putting logic inside routes
+- Real-time: Server-Sent Events (SSE)
+- AI: Groq (OpenAI-compatible chat completions API)
 
 ---
 
@@ -53,47 +45,48 @@ Why this approach:
 
 ### 1) Prerequisites
 - Node.js 18+
-- MongoDB Atlas cluster (URI stored in `.env` only)
+- MongoDB Atlas cluster
 
 ### 2) Backend setup
 
-cd server
-npm install
+`cd server
+npm install`
 
-Create server/.env:
 
-PORT=5050
-MONGO_URI=your_mongodb_atlas_uri_here
-JWT_SECRET=your_long_random_secret
+- Create server/.env:
 
-# Optional AI (app works without these)
-GROQ_API_KEY=your_groq_key
-GROQ_MODEL=llama-3.1-8b-instant
+`PORT=5050
+MONGO_URI=<your_mongodb_atlas_uri>
+JWT_SECRET=<your_long_random_secret>`
 
-Seed database (loads provided JSON dataset into Atlas):
+##### Optional (AI). App works without AI if these are missing.
+`GROQ_API_KEY=<your_groq_api_key>`
+`GROQ_MODEL=llama-3.1-8b-instant`
 
-npm run seed
+- Seed DB with provided dataset:
 
-Start backend:
+`npm run seed`
 
-npm run dev
+- Start backend:
 
-Backend runs at:
+`npm run dev`
 
-http://localhost:5050
+- Health check:
+
+`curl http://localhost:5050/api/health`
 
 ### 3) Frontend setup
-cd ../client
-npm install
+`cd ../client`
+`npm install`
 
-Create client/.env:
+- Create client/.env:
 
-VITE_API_BASE_URL=http://localhost:5050
+`VITE_API_BASE_URL=http://localhost:5050`
 
-Start frontend:
+- Start frontend:
 
-npm run dev
+`npm run dev`
 
-Frontend runs at:
+## Open:
 
-http://localhost:5173
+`http://localhost:5173`

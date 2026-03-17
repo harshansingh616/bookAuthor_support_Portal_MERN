@@ -12,7 +12,10 @@ const { errorHandler } = require("./middleware/error");
 function createApp() {
   const app = express();
 
-  app.use(cors({ origin: true }));
+  //app.use(cors({ origin: true }));
+  const allowedOrigin = process.env.CORS_ORIGIN || true;
+  app.use(cors({ origin: allowedOrigin }));
+  
   app.use(express.json());
 
   morgan.token("cleanUrl", (req) => (req.originalUrl || "").split("?")[0]);
