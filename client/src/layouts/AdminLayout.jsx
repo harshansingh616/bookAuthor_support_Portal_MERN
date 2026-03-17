@@ -1,9 +1,8 @@
 import React from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { SseProvider } from "../context/SseContext";
 
-export default function AuthorLayout() {
+export default function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -13,15 +12,13 @@ export default function AuthorLayout() {
   }
 
   return (
-    <SseProvider>
+    <>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <div className="container">
-          <Link className="navbar-brand" to="/author/books">BookLeaf</Link>
+          <Link className="navbar-brand" to="/admin/tickets">BookLeaf Admin</Link>
 
           <div className="navbar-nav">
-            <Link className="nav-link" to="/author/books">My Books</Link>
-            <Link className="nav-link" to="/author/tickets">My Tickets</Link>
-            <Link className="nav-link" to="/author/tickets/new">New Ticket</Link>
+            <Link className="nav-link" to="/admin/tickets">Ticket Queue</Link>
           </div>
 
           <div className="d-flex align-items-center gap-2">
@@ -36,6 +33,6 @@ export default function AuthorLayout() {
       <main className="container py-4">
         <Outlet />
       </main>
-    </SseProvider>
+    </>
   );
 }

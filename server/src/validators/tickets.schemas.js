@@ -13,7 +13,7 @@ const ticketPriorityEnum = z.enum(["Critical", "High", "Medium", "Low"]);
 const ticketStatusEnum = z.enum(["Open", "In Progress", "Resolved", "Closed"]);
 
 const createTicketSchema = z.object({
-  bookExternalId: z.string().trim().min(1).nullable().optional(), 
+  bookExternalId: z.string().trim().min(1).nullable().optional(),
   subject: z.string().trim().min(3).max(120),
   description: z.string().trim().min(10).max(5000),
 });
@@ -34,9 +34,13 @@ const adminTicketListQuerySchema = z.object({
   status: ticketStatusEnum.optional(),
   category: ticketCategoryEnum.optional(),
   priority: ticketPriorityEnum.optional(),
-  from: z.string().optional(), // ISO date string; parse in service
+  from: z.string().optional(),
   to: z.string().optional(),
-  q: z.string().trim().optional(), // search in subject
+  q: z.string().trim().optional(),
+});
+
+const adminDraftQuerySchema = z.object({
+  force: z.string().optional(), // "1" or "true"
 });
 
 module.exports = {
@@ -44,4 +48,5 @@ module.exports = {
   adminReplySchema,
   adminUpdateTicketSchema,
   adminTicketListQuerySchema,
+  adminDraftQuerySchema,
 };

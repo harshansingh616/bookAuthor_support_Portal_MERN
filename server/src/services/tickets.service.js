@@ -4,6 +4,8 @@ const Book = require("../models/Book");
 const Ticket = require("../models/Ticket");
 const TicketMessage = require("../models/TicketMessage");
 const sseHub = require("../realtime/sseHub");
+const ticketsAi = require("../ai/ticketsAi.service");
+const { env } = require("../config/env");
 
 async function createTicket({ userId, authorRef, bookExternalId, subject, description }) {
   if (!authorRef) throw new HttpError(400, "Author profile not linked");
@@ -38,6 +40,7 @@ async function createTicket({ userId, authorRef, bookExternalId, subject, descri
 
   const ticketId = String(ticket._id);
 
+  // SSE: ticket created
   sseHub.publishToAuthor(authorRef, "ticket.created", {
     ticketId,
     subject: ticket.subject,
@@ -48,6 +51,7 @@ async function createTicket({ userId, authorRef, bookExternalId, subject, descri
     createdAt: ticket.createdAt,
   });
 
+  // SSE: first message
   sseHub.publishToAuthor(authorRef, "ticket.message.created", {
     ticketId,
     message: {
@@ -57,6 +61,55 @@ async function createTicket({ userId, authorRef, bookExternalId, subject, descri
       createdAt: msg.createdAt,
     },
   });
+
+  // BEST-EFFORT AI TRIAGE (graceful degradation)
+  if (env.groqApiKey) {
+    try {
+      const triage = await ticketsAi.triageTicket({ subject, description });
+
+      await Ticket.updateOne(
+        { _id: ticket._id },
+        {
+          $set: {
+            category: triage.category,
+            categorySource: "ai",
+            priority: triage.priority,
+            prioritySource: "ai",
+            ai: {
+              triage: {
+                model: triage._meta.model,
+                category: triage.category,
+                priority: triage.priority,
+                rationale: triage.rationale || "",
+                usage: triage._meta.usage,
+                createdAt: new Date(),
+              },
+            },
+          },
+        }
+      );
+
+      // SSE: author sees updated category/priority
+      sseHub.publishToAuthor(authorRef, "ticket.updated", {
+        ticketId,
+        changed: { category: triage.category, priority: triage.priority },
+        status: ticket.status,
+        category: triage.category,
+        priority: triage.priority,
+        lastActivityAt: new Date(),
+      });
+    } catch (err) {
+      // Save error (optional) but do not block ticket creation
+      await Ticket.updateOne(
+        { _id: ticket._id },
+        {
+          $set: {
+            ai: { triage: { error: err.message || "AI triage failed", createdAt: new Date() } },
+          },
+        }
+      );
+    }
+  }
 
   return { id: ticketId };
 }

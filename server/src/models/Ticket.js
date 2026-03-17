@@ -32,6 +32,26 @@ const TicketSchema = new mongoose.Schema(
     internalNotes: { type: String, default: "" },
 
     lastActivityAt: { type: Date, default: () => new Date(), index: true },
+
+    // NEW: store AI metadata (helps interview explanation + debugging)
+    ai: {
+      triage: {
+        model: String,
+        category: String,
+        priority: String,
+        rationale: String,
+        usage: Object,
+        error: String,
+        createdAt: Date,
+      },
+      draft: {
+        model: String,
+        draft: String,
+        usage: Object,
+        error: String,
+        createdAt: Date,
+      },
+    },
   },
   { timestamps: true }
 );

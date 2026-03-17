@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // validate token by calling /me whenever token changes
+  
   useEffect(() => {
     let cancelled = false;
 

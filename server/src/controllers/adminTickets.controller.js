@@ -26,9 +26,16 @@ async function update(req, res) {
   const result = await adminTicketsService.updateTicket({
     ticketId,
     patch: req.body,
-    adminUserId: req.user.id,
   });
   res.json(result);
 }
 
-module.exports = { list, detail, reply, update };
+async function draft(req, res) {
+  const { ticketId } = req.params;
+  const force = req.query.force === "1" || req.query.force === "true";
+
+  const result = await adminTicketsService.getOrCreateDraft({ ticketId, force });
+  res.json(result);
+}
+
+module.exports = { list, detail, reply, update, draft };
