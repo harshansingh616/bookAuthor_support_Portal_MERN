@@ -3,7 +3,6 @@
 
 ## 2) `WRITEUP.md`
 
-```md
 # BookLeaf Portal – Approach & Tradeoffs (1 Page)
 
 ## What I prioritised
